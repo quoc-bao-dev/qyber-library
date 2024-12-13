@@ -93,7 +93,7 @@ class App extends Component {
                         navigation without reloads.
                     </p>
                     <a
-                        href="https://github.com/qyber-library"
+                        href="https://github.com/quoc-bao-dev/qyber-library.git"
                         class="cta-button"
                         >Get Started</a
                     >
