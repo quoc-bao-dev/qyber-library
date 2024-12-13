@@ -18,7 +18,12 @@ class App extends Component {
     render(): HTMLElement {
         return html` <div style="display: contents;">
             <nav>
-                <a href="#" class="logo">Qyber</a>
+                <a href="#" class="logo ">
+                    <div class="logo-container">
+                        <img src="/logo.png" />
+                        <p>Qyber</p>
+                    </div>
+                </a>
                 <ul>
                     <li><a href="#features">Features</a></li>
                     <li><a href="#getting-started">Getting Started</a></li>

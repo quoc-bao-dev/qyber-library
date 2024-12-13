@@ -8,11 +8,25 @@ body {
 }
 
 header {
-    background: linear-gradient(135deg, #6c63ff, #f1c40f);
+    background: linear-gradient(135deg, #c4afff, #ffeb9a);
+    background-size: 200% 200%;
     color: white;
     padding: 100px 30px 50px;
     text-align: center;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    animation: colorTransitionInfinite 10s linear infinite;
+}
+
+@keyframes colorTransitionInfinite {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 nav {
@@ -31,10 +45,22 @@ nav .logo {
     font-family: 'Poppins', sans-serif;
     font-size: 1.5rem;
     font-weight: 700;
-    color: #6c63ff;
+    color: #29009b;
     text-decoration: none;
 }
 
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.logo-container p {
+    line-height: 0;
+}
+.logo img {
+    width: 40px;
+    height: fit-content;
+}
 nav ul {
     list-style: none;
     margin: 0;
@@ -55,7 +81,7 @@ nav ul li a {
 }
 
 nav ul li a:hover {
-    color: #6c63ff;
+    color: #29009b;
 }
 
 header h1 {
@@ -66,7 +92,7 @@ header h1 {
 }
 
 header h1 .hight-light {
-    color: #6c63ff;
+    color: #29009b;
 }
 
 header p {
@@ -106,7 +132,7 @@ header p {
 
 .feature h3 {
     font-size: 1.8rem;
-    color: #6c63ff;
+    color: #29009b;
     font-family: 'Poppins', sans-serif;
     font-weight: 700;
 }
@@ -129,7 +155,7 @@ header p {
 
 .getting-started h2 {
     font-size: 2.5rem;
-    color: #6c63ff;
+    color: #29009b;
     font-family: 'Poppins', sans-serif;
     font-weight: 700;
 }
@@ -146,6 +172,7 @@ header p {
 }
 
 p.title-lib {
+    margin-top: -30px;
     font-size: 48px;
     font-weight: 700;
     color: #2c3e50;
@@ -181,7 +208,7 @@ p.title-lib {
     background-color: #425160;
 }
 .cta-button {
-    background: #6c63ff;
+    background: #29009b;
     color: white;
     padding: 12px 30px;
     font-size: 1.3rem;
@@ -206,7 +233,7 @@ p.title-lib {
 
 .testimonials h2 {
     font-size: 2.5rem;
-    color: #6c63ff;
+    color: #29009b;
     font-family: 'Poppins', sans-serif;
     font-weight: 700;
     margin-bottom: 40px;
@@ -236,7 +263,7 @@ p.title-lib {
 .testimonial-box .author {
     font-size: 0.9rem;
     font-weight: 700;
-    color: #6c63ff;
+    color: #29009b;
     margin-top: 10px;
     text-align: right;
 }
@@ -260,7 +287,7 @@ p.title-lib {
     position: absolute;
     top: 10px;
     right: 10px;
-    background: #6c63ff;
+    background: #29009b;
     color: white;
     border: none;
     padding: 5px 10px;
