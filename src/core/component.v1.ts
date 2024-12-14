@@ -127,8 +127,12 @@ abstract class Component<
         this.runEffects();
     }
 
+    /**
+     * Process the update queue.
+     *
+     * This will apply all the updates in the queue to the component's state.
+     */
     processUpdateQueue() {
-        // Áp dụng các cập nhật từ queue
         while (this.updateQueue.length > 0) {
             const stateInQueue = this.updateQueue.shift();
             if (typeof stateInQueue === 'function') {
