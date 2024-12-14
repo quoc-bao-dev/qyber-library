@@ -1,0 +1,40 @@
+version: '3.9'
+
+services:
+  web:
+    container_name: web_qyber
+    build:
+      context: .
+      dockerfile: Dockerfile
+    labels:
+      # traefik common
+      - traefik.enable=true
+      - traefik.constraint-label=proxy
+        #- traefik.docker.networks=proxy
+
+        # http redirect
+      - traefik.http.routers.qyber-redirect.rule=Host(`qyber.${DOMAIN}`)
+      - traefik.http.routers.qyber-redirect.entrypoints=http
+      - traefik.http.routers.qyber-redirect.middlewares=https-redirect@file
+
+        # https handle
+      - traefik.http.routers.qyber.rule=Host(`qyber.${DOMAIN}`)
+      - traefik.http.routers.qyber.entrypoints=https
+
+        # tls
+      - traefik.http.routers.qyber.tls=true
+      - traefik.http.routers.qyber.tls.certresolver=le
+      - traefik.http.routers.qyber.tls.options=modern@file
+
+        # service
+      - traefik.http.services.qyber.loadbalancer.server.port=80
+
+    networks:
+      - proxy
+
+    restart: always
+
+
+networks:
+  proxy:
+    external: true
