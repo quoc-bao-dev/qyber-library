@@ -3,6 +3,8 @@ import { Signal } from './signal.v1';
 export type ComponentProps = Record<string, any>;
 export type ComponentState = Record<string, any>;
 
+const workQueue: Component<any, any>[] = [];
+
 /**
  * Abstract class for all components.
  *
@@ -31,6 +33,7 @@ abstract class Component<
     private _root: HTMLElement | null = null;
     private _observer: MutationObserver | null = null;
     private preSignal: any[] = [];
+    private updateQueue: (Partial<S> | ((prevState: S) => Partial<S>))[] = [];
     private effects: Array<{
         callback: () => (() => void) | void;
         dependenciesGetter: () => any[];
@@ -107,25 +110,33 @@ abstract class Component<
      *
      * @param newState The new state for the component.
      */
-    protected setState(newState: S | ((prevState: S) => S)) {
-        const updatedState =
-            typeof newState === 'function' ? newState(this.state) : newState;
-        if (updatedState === this.state) return;
-        this.state = updatedState;
+    protected setState(newState: Partial<S> | ((prevState: S) => Partial<S>)) {
+        this.updateQueue.push(newState);
+        scheduleUpdate(this);
+    }
+
+    reRender() {
         const newRoot = this.render();
-        if (this._root && this._root.parentNode) {
-            this._root.replaceWith(newRoot);
-            this._root = newRoot;
-        }
+        setTimeout(() => {
+            if (this._root && this._root.parentNode) {
+                this._root.replaceWith(newRoot);
+                this._root = newRoot;
+            }
+        });
         this.componentDidUpdate();
         this.runEffects();
     }
 
-    private reRender() {
-        const newRoot = this.render();
-        if (this._root && this._root.parentNode) {
-            this._root.replaceWith(newRoot);
-            this._root = newRoot;
+    processUpdateQueue() {
+        // Áp dụng các cập nhật từ queue
+        while (this.updateQueue.length > 0) {
+            const stateInQueue = this.updateQueue.shift();
+            if (typeof stateInQueue === 'function') {
+                const partialState = stateInQueue(this.state);
+                this.state = { ...this.state, ...partialState };
+            } else {
+                this.state = { ...this.state, ...stateInQueue };
+            }
         }
     }
 
@@ -260,6 +271,40 @@ abstract class Component<
         });
         return unsubscribe;
     }
+}
+
+let requestId: number | null = null;
+
+/**
+ * Schedules an update for a component.
+ *
+ * This function is used to manage the queue of components that need to be updated.
+ * It ensures that only one update is performed per frame and that components are
+ * updated in the order they were scheduled.
+ *
+ * @param component The component to update.
+ */
+function scheduleUpdate(component: Component<any, any>) {
+    // Put the component in the queue
+    const componentIndex = workQueue.indexOf(component);
+    if (componentIndex !== -1) {
+        workQueue.splice(componentIndex, 1);
+    }
+    workQueue.push(component);
+
+    if (requestId !== null) {
+        cancelIdleCallback(requestId);
+    }
+    // Perform the work in the event loop
+    requestId = requestIdleCallback(() => {
+        while (workQueue.length > 0) {
+            const component = workQueue.shift();
+            if (component) {
+                component.processUpdateQueue();
+                component.reRender();
+            }
+        }
+    });
 }
 
 export default Component;
