@@ -5,10 +5,21 @@
  * @returns An HTML element.
  */
 
+/**
+ * Create an HTML element using a template literal.
+ * @param strings - Template literal strings.
+ * @param values - Dynamic values interpolated into the template.
+ * @returns An HTML element.
+ */
 export function html(
     strings: TemplateStringsArray,
     ...values: any[]
 ): HTMLElement {
+    /**
+     * Escape the given string from HTML special characters.
+     * @param str - The string to be escaped.
+     * @returns The escaped string.
+     */
     const escapeHTML = (str: string): string =>
         str
             .replace(/&/g, '&amp;')
@@ -17,7 +28,6 @@ export function html(
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#039;');
 
-    // Kết hợp strings và values để tạo HTML string
     const template = strings.reduce((acc, str, i) => {
         const value = values[i];
         if (
@@ -26,7 +36,7 @@ export function html(
             value === false ||
             value === ''
         ) {
-            return acc + str; // Bỏ qua các giá trị không hợp lệ
+            return acc + str;
         }
 
         if (typeof value === 'function') {
@@ -46,15 +56,12 @@ export function html(
             );
         }
 
-        // Escape các giá trị chuỗi
         return acc + str + escapeHTML(String(value));
     }, '');
 
-    // Tạo container DOM để parse HTML
     const container = document.createElement('div');
     container.innerHTML = template.trim();
 
-    // Đảm bảo template chỉ có một root element
     if (container.children.length !== 1) {
         console.error(
             new Error('Template must contain a single root element.')
@@ -64,10 +71,10 @@ export function html(
 
     const element = container.firstElementChild as HTMLElement;
 
-    // Xử lý các placeholders trong DOM
+    // Iterate over the values and process each based on its type
     values.forEach((value, index) => {
+        // If the value is a function, assign it to the corresponding attribute
         if (typeof value === 'function') {
-            // Gán callback cho các placeholder
             const placeholder = `__callback${index}__`;
             const targetElement = Array.from(
                 container.querySelectorAll('*')
@@ -84,11 +91,11 @@ export function html(
 
                 if (attrName) {
                     targetElement.removeAttribute(attrName);
-                    (targetElement as any)[attrName] = value; // Gán trực tiếp callback
+                    (targetElement as any)[attrName] = value;
                 }
             }
+            // If the value is an HTMLElement, replace the corresponding placeholder
         } else if (value instanceof HTMLElement) {
-            // Thay thế các `template` bằng component
             const placeholder = `__component${index}__`;
             const targetElement = element.querySelector(
                 `template[id="${placeholder}"]`
@@ -96,11 +103,11 @@ export function html(
             if (targetElement) {
                 targetElement.replaceWith(value);
             }
+            // If the value is an array of HTMLElements, replace the corresponding placeholder with clones of the elements
         } else if (
             Array.isArray(value) &&
             value.every((v) => v instanceof HTMLElement)
         ) {
-            // Thay thế mảng component
             const placeholder = `__arr_component${index}__`;
             const targetElement = element.querySelector(
                 `template[id="${placeholder}"]`

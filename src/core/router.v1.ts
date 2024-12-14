@@ -81,20 +81,6 @@ export class Router {
                 }
             );
 
-            // if (pathname === '*') {
-            //     const componentInstance = route.component
-            //         ? new route.component({})
-            //         : route.lazyComponent
-            //         ? await this.loadLazyComponent(route.lazyComponent, {})
-            //         : null;
-            //     if (!componentInstance) return null;
-            //     return {
-            //         component: componentInstance.html,
-            //         params: {},
-            //         query: {},
-            //     };
-            // }
-
             if (route.path === '*') {
                 const componentInstance = route.component
                     ? new route.component({})

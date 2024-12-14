@@ -241,6 +241,12 @@ abstract class Component<
         });
     }
 
+    /**
+     * Subscribes to a signal and re-renders the component when the signal's value changes.
+     *
+     * @param signal The signal to subscribe to.
+     * @returns An unsubscribe function to stop listening to the signal.
+     */
     addSignal<T>(signal: Signal<T>) {
         const value = signal.get;
         this.preSignal.push(value);
