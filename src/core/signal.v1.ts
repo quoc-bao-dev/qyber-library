@@ -63,8 +63,6 @@ export class Signal<T> {
  * @param initialValue - The initial value of the signal.
  * @returns A new Signal instance.
  */
-function signal<T>(initialValue: T): Signal<T> {
+export function signal<T>(initialValue: T): Signal<T> {
     return new Signal(initialValue);
 }
-
-export default signal;

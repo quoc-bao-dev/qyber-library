@@ -1,4 +1,4 @@
-import Component from './component';
+import Component from './component.v1';
 
 /**
  * Represents a route in the application.
@@ -39,7 +39,7 @@ type RouteMatch = {
 /**
  * Manages routing within the application.
  */
-class Router {
+export class Router {
     private routes: RouteMapping[];
     private rootElement: HTMLElement;
     private loadingComponent?: HTMLElement; // Optional loading component
@@ -80,6 +80,35 @@ class Router {
                     return '([^/]+)';
                 }
             );
+
+            // if (pathname === '*') {
+            //     const componentInstance = route.component
+            //         ? new route.component({})
+            //         : route.lazyComponent
+            //         ? await this.loadLazyComponent(route.lazyComponent, {})
+            //         : null;
+            //     if (!componentInstance) return null;
+            //     return {
+            //         component: componentInstance.html,
+            //         params: {},
+            //         query: {},
+            //     };
+            // }
+
+            if (route.path === '*') {
+                const componentInstance = route.component
+                    ? new route.component({})
+                    : route.lazyComponent
+                    ? await this.loadLazyComponent(route.lazyComponent, {})
+                    : null;
+                if (!componentInstance) return null;
+                return {
+                    component: componentInstance.html,
+                    params: {},
+                    query: {},
+                };
+            }
+
             const match = pathname.match(new RegExp(`^${regexPath}$`));
             if (match) {
                 const params = paramNames.reduce(
@@ -106,8 +135,6 @@ class Router {
                 if (route.parent) {
                     const parentInstance = new route.parent({});
                     const parentElement = parentInstance.html;
-                    console.log(parentElement);
-
                     const outlet =
                         parentElement.querySelector('#router-outlet');
 
@@ -144,6 +171,17 @@ class Router {
                 return { component: componentInstance.html, params, query };
             }
         }
+        const defaultRoute = this.routes.find((route) => route.path === '*');
+
+        if (defaultRoute) {
+            const componentInstance = defaultRoute.component
+                ? new defaultRoute.component({})
+                : defaultRoute.lazyComponent
+                ? await this.loadLazyComponent(defaultRoute.lazyComponent, {})
+                : null;
+            if (!componentInstance) return null;
+            return { component: componentInstance.html, params: {}, query: {} };
+        }
         return null;
     }
 
@@ -164,10 +202,6 @@ class Router {
             fragment.appendChild(this.loadingComponent);
             this.rootElement.innerHTML = '';
             this.rootElement.appendChild(fragment);
-            // setTimeout(() => {
-            //     this.rootElement.innerHTML = '';
-            //     this.rootElement.appendChild(component);
-            // });
         }
 
         try {
@@ -191,10 +225,6 @@ class Router {
 
             this.rootElement.innerHTML = ''; // Clear root element
             this.rootElement.appendChild(fragment);
-            // setTimeout(() => {
-            //     this.rootElement.innerHTML = '';
-            //     this.rootElement.appendChild(match.component);
-            // }, 0);
         } else {
             console.error('No matching route found for:', pathname);
         }
@@ -262,5 +292,3 @@ function flattenRoutes(
             : [currentRoute];
     });
 }
-
-export default Router;

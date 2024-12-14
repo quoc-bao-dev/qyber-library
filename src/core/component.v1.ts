@@ -1,7 +1,7 @@
-import { Signal } from './signal';
+import { Signal } from './signal.v1';
 
-type ComponentProps = Record<string, any>;
-type ComponentState = Record<string, any>;
+export type ComponentProps = Record<string, any>;
+export type ComponentState = Record<string, any>;
 
 /**
  * Abstract class for all components.

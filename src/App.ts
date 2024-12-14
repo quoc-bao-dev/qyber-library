@@ -1,6 +1,4 @@
-import Component from './core/component';
-import { html } from './core/html';
-import signal from './core/signal';
+import Component, { html, signal } from './core';
 
 const counterSignal = signal(0);
 
@@ -81,7 +79,7 @@ class App extends Component {
                     </div>
                 </section>
                 <section id="getting-started" class="getting-started">
-                    <h2>Qick Started</h2>
+                    <h2>Qick Start</h2>
                     <p>
                         Building modern applications has never been easier.
                         Follow these steps to get started with Qyber:

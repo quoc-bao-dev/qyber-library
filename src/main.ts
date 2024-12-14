@@ -1,4 +1,4 @@
-import router from './router.app';
+import router from './router';
 import './index.css';
 
 document.addEventListener('DOMContentLoaded', async () => {
